@@ -1,0 +1,138 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 45 30% 96%;
+    --foreground: 222 24% 12%;
+
+    --card: 45 28% 98%;
+    --card-foreground: 222 24% 12%;
+
+    --popover: 45 28% 98%;
+    --popover-foreground: 222 24% 12%;
+
+    --primary: 209 33% 36%;
+    --primary-foreground: 45 30% 97%;
+
+    --secondary: 42 28% 90%;
+    --secondary-foreground: 222 24% 15%;
+
+    --muted: 42 18% 90%;
+    --muted-foreground: 222 10% 42%;
+
+    --accent: 42 55% 50%;
+    --accent-foreground: 222 24% 12%;
+
+    --destructive: 6 50% 45%;
+    --destructive-foreground: 45 30% 97%;
+
+    --border: 42 20% 84%;
+    --input: 42 20% 84%;
+    --ring: 209 33% 36%;
+
+    --radius: 0.75rem;
+
+    /* Noteloom signature tokens (stable across themes) */
+    --ink: 222 26% 10%;
+    --paper: 45 30% 96%;
+    --thread: 209 33% 36%;
+    --thread-light: 209 24% 58%;
+    --manila: 42 55% 50%;
+    --brick: 6 48% 45%;
+    --moss: 152 32% 32%;
+  }
+
+  .dark {
+    --background: 222 26% 8%;
+    --foreground: 45 20% 92%;
+
+    --card: 222 22% 11%;
+    --card-foreground: 45 20% 92%;
+
+    --popover: 222 22% 11%;
+    --popover-foreground: 45 20% 92%;
+
+    --primary: 209 45% 64%;
+    --primary-foreground: 222 26% 10%;
+
+    --secondary: 222 18% 17%;
+    --secondary-foreground: 45 20% 90%;
+
+    --muted: 222 15% 17%;
+    --muted-foreground: 220 10% 65%;
+
+    --accent: 42 60% 58%;
+    --accent-foreground: 222 26% 10%;
+
+    --destructive: 6 55% 58%;
+    --destructive-foreground: 222 26% 10%;
+
+    --border: 222 15% 19%;
+    --input: 222 15% 19%;
+    --ring: 209 45% 64%;
+
+    --ink: 45 20% 92%;
+    --paper: 222 26% 8%;
+    --thread: 209 45% 64%;
+    --thread-light: 209 30% 50%;
+    --manila: 42 65% 62%;
+    --brick: 6 60% 62%;
+    --moss: 152 35% 48%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
+
+@layer utilities {
+  .bg-paper-texture {
+    background-image: radial-gradient(
+      circle at 1px 1px,
+      rgba(0, 0, 0, 0.05) 1px,
+      transparent 0
+    );
+    background-size: 20px 20px;
+  }
+  .dark .bg-paper-texture {
+    background-image: radial-gradient(
+      circle at 1px 1px,
+      rgba(255, 255, 255, 0.04) 1px,
+      transparent 0
+    );
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.3);
+    border-radius: 999px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .thread-dotted {
+    background-image: radial-gradient(
+      hsl(var(--thread) / 0.55) 1.5px,
+      transparent 1.5px
+    );
+    background-size: 8px 2px;
+    background-repeat: repeat-x;
+    background-position: center;
+  }
+
+  .stitch-border {
+    border: 1.5px dashed hsl(var(--border));
+  }
+}
