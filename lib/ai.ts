@@ -240,19 +240,66 @@ async function callOpenAI(opts: CallAIOptions): Promise<string> {
 
 export function parseJSONResponse<T>(raw: string): T {
   const cleaned = raw
-    .trim()
-    .replace(/^```json\s*/i, "")
-    .replace(/^```\s*/i, "")
-    .replace(/```\s*$/i, "")
+    .replace(/^\uFEFF/, "")
+    .replace(/```(?:json)?\s*/gi, "")
     .trim();
-  try {
-    return JSON.parse(cleaned) as T;
-  } catch (err) {
-    // Try to salvage the first {...} block if the model added prose around it.
-    const match = cleaned.match(/\{[\s\S]*\}/);
-    if (match) {
-      return JSON.parse(match[0]) as T;
+
+  const candidates = [cleaned, ...extractJSONValues(cleaned)];
+
+  for (const candidate of candidates) {
+    try {
+      return JSON.parse(candidate) as T;
+    } catch {
+      // Keep trying; models sometimes add prose before/after the JSON.
     }
-    throw new Error("Could not parse AI response as JSON: " + cleaned.slice(0, 300));
   }
+
+  throw new Error(
+    "Could not parse AI response as JSON: " + cleaned.slice(0, 300)
+  );
+}
+
+function extractJSONValues(text: string): string[] {
+  const values: string[] = [];
+
+  for (let start = 0; start < text.length; start++) {
+    const first = text[start];
+    if (first !== "{" && first !== "[") continue;
+
+    const stack = [first === "{" ? "}" : "]"];
+    let inString = false;
+    let escaped = false;
+
+    for (let i = start + 1; i < text.length; i++) {
+      const char = text[i];
+
+      if (inString) {
+        if (escaped) {
+          escaped = false;
+        } else if (char === "\\") {
+          escaped = true;
+        } else if (char === '"') {
+          inString = false;
+        }
+        continue;
+      }
+
+      if (char === '"') {
+        inString = true;
+      } else if (char === "{") {
+        stack.push("}");
+      } else if (char === "[") {
+        stack.push("]");
+      } else if (char === stack[stack.length - 1]) {
+        stack.pop();
+
+        if (stack.length === 0) {
+          values.push(text.slice(start, i + 1));
+          break;
+        }
+      }
+    }
+  }
+
+  return values;
 }
